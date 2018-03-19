@@ -5,12 +5,12 @@ HTML Tag Decorator.
 ## Getting Started
 
 Clone or Download  
-`python install setup.py`  
+`python setup.py install`  
  
 ### examples 
 `from pytooteem import tag` 
   
-Bold wrap:    
+Tag wrap:    
 `@tag('b')`  
 `def make_bold(value):`  
 &nbsp;&nbsp;&nbsp;&nbsp;`return value`  
@@ -18,7 +18,7 @@ Bold wrap:
 Result: <b>my_name</b>  
 
 Passing attributes (argument order preserved in 3.6):  
-`@tag('a',href='#', taget='_self')`  
+`@tag('a',href='#', target='_self')`  
 `def make_a(value):`  
 &nbsp;&nbsp;&nbsp;&nbsp;`return value`  
 `print make_a('my_link')`  
