@@ -1,45 +1,177 @@
 # pytooteem  
 
-HTML Tag Decorator.
+Wrap code with html using Python decorators.
 
 ## Getting Started
 
 Clone or Download  
+`cd pytooteem`  
 `python setup.py install`  
  
-### examples 
-`from pytooteem import tag` 
+### Simple Example 
+	from pytooteem import wraptag
+	
+	@wraptag('button')     
+	@tag('h3', 'pytooteem'.upper(), style='background:MediumSeaGreen;') 
+	def make_h3():  
+		pass  
+	assert make_h3() == '<button><h3 style="background:MediumSeaGreen;">PYTOOTEEM</h3></button>'  
+ 
+<button><h3 style="background:MediumSeaGreen;">PYTOOTEEM</h3></button>  
+
+## Usage
+
+### Blocks  
+
+Block is a decorated function that defines HTML layering of an element 
+
+	...  
+	@pytooteemdecorator  
+	@pytooteemdecorator  
+	def block(): 
+		pass   
+
+
+***
+### Tag Decorator  
+ 
+
+	from pytooteem import tag 
+
+Empty tag    
   
-Tag wrap:    
-`@tag('b')`  
-`def make_bold(value):`  
-&nbsp;&nbsp;&nbsp;&nbsp;`return value`  
-`print make_bold('my_name')`  
-Result: <b>my_name</b>  
+	@tag(String)  
+ex: `@tag('button')` <button></button> 
 
-Passing attributes (argument order preserved in 3.6):  
-`@tag('a',href='#', target='_self')`  
-`def make_a(value):`  
-&nbsp;&nbsp;&nbsp;&nbsp;`return value`  
-`print make_a('my_link')`  
-Result: <a href="#" target="_self">my_link</a>  
+Tag with value    
+  
+	@tag(String, String)   
+ex: `@tag('button', 'button')` <button>button</button>  
 
-Passing class attribute ('class' reserved by python )  
-`@tag('div',clas='my_div')`  
-`def make_div(value):`  
-&nbsp;&nbsp;&nbsp;&nbsp;`return value`  
-`print make_div('my_div')`  
-Result: <div class="my_div">my_div</div>  
+Tag with attributes    
+  
+	@tag(String, **kwargs)    
+ex: `@tag('button', disabled='')` <button disabled=""></button>  
 
-Tag stacking  
-`@tag('a')`  
-`@tag('b')`  
-`def make_a(value):`  
-&nbsp;&nbsp;&nbsp;&nbsp;`return value`  
-`print make_a('my_link')`  
-Result: <a><b>my_link</b></a>  
+* Pass 'class' as html attribute 
+ 
+		@tag(String, clas='')    
+ex: `@tag('button', clas='button')` <button class="button"></button>    
+
+Tag with container    
+  
+	@tag(String, tuple))    
+ex: `@tag('button', ('b1', 'b2'))` <button>b1</button><button>b2</button> 
+
+***
+### Wraptag Decorator 
+ 
+
+	from pytooteem import wrapatg 
+
+Empty wrap    
+  
+	@wraptag(String)  
+ex: `@wraptag('button')` <button></button>  
+
+Wrap with attributes    
+  
+	@wraptag(String, **kwargs)    
+ex: `@wraptag('button', disabled='')` <button disabled=""></button> 
+
+***
+### Plain Decorator 
+ 
+	from pytooteem import plain  
+
+Empty wrap    
+  
+	@plain(String)  
+ex: `@plain('<button>')` <button>  
+
+***
+### Block Decorator 
+  
+	from pytooteem import block  
+
+	# example block  
+	@tag('button')   
+	def button_block():  
+		pass    
+
+Single block
+ 
+	@block(button_block)   
+	def parent_block():    
+		pass`  
+ex:  
+ `parent_block()` <button></button>   
+
+Multiple blocks   
+
+	@block(button_block)    
+	@block(button_block)   
+	def parent_block():     
+		pass   
+ex:  
+ `parent_block()` <button></button><button></button>   
+
+***
+
+### Recipes  
+
+Recipe is a function containing dynamic HTML definition for a block.  
+
+    def recipe():
+		@pytooteemdecorator
+        def make_recipe():
+            pass
+        return make_recipe()  
+***
+
+### Data Decorator  
+Recipe decorator, combine Data with HTML
+
+	from pytooteem import data  
+
+2D container  
+  
+	@data(2dcontainer)  
+
+ex:   
+  
+	@data((('d1', 'd2'), ('p1', 'p2')))  
+    def li_recipe(element):  
+        @wraptag('ul')  
+        @tag('li', element[0])  
+        @tag('li', element[1])  
+        def li_block():  
+            pass  
+        return li_block()  
+
+<ul><li>d1</li><li>d2</li></ul><ul><li>p1</li><li>p2</li></ul>  
+
+Object Container  
+  
+	@data(object_container)  
+
+ex:   
+  
+	@data(get_objects())  
+    def li_recipe(element):  
+        @wraptag('ul')  
+        @tag('li', element.instance_variable1)  
+        @tag('li', element.instance_variable2)    
+        def li_block():  
+            pass  
+        return li_block()  
+
+## Pytooteem_app  
+
+Examples over Flask application
 
 ## Testing	
+
 `pytest -v`
 
 
