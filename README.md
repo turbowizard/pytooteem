@@ -1,6 +1,6 @@
 # pytooteem  
 
-Wrap code with html using Python decorators.
+Easy and Dynamic markup with Python decorators to close the distance between models and views.
 
 ## Getting Started
 
@@ -9,139 +9,205 @@ Clone or Download
 `python setup.py install`  
  
 ### Simple Example 
-	from pytooteem import wraptag
+	from pytooteem import wraptag, tag
 	
-	@wraptag('button')     
-	@tag('h3', 'pytooteem'.upper(), style='background:MediumSeaGreen;') 
+	@wraptag('div', style='background:MediumSeaGreen;')     
+	@tag('h3', 'pytooteem'.upper()) 
 	def make_h3():  
 		pass  
-	assert make_h3() == '<button><h3 style="background:MediumSeaGreen;">PYTOOTEEM</h3></button>'  
+	assert make_h3() == '<div style="background:MediumSeaGreen;"><h3>PYTOOTEEM</h3></div> '  
  
-<button><h3 style="background:MediumSeaGreen;">PYTOOTEEM</h3></button>  
+<div style="background:MediumSeaGreen;"><h3>PYTOOTEEM</h3></div>  
 
 ## Usage
 
-### Blocks  
+### Tag Decorator  
 
-Block is a decorated function that defines HTML layering of an element 
+Use the tag decorator to define a tag and its properties. 
+ 
+
+	from pytooteem import tag  
+
+Tag decorator arguments 
+	
+	@tag(tag_name, tag_content, tag_attributes)	
+
+	expected types:  
+	tag_name as String  
+	tag_content as String or Container
+	tag_attributes as **kwargs  
+
+Tag types
+
+
+	Empty tag 
+	@tag(String)
+
+	Tag with value      
+	@tag(String, String)    
+
+	Tag with attributes      
+	@tag(String, **kwargs)    
+
+	Tag with container - create tag for each element in container     
+	@tag(String, container)
+  
+Special cases
+
+	Passing 'class' as attribute  
+	@tag(String, clas='')    
+
+Example
+
+`@tag('b', ('hello', 'world'), style='margin:10px;background:lightBlue;')`  
+
+<b style="margin:10px;background:lightBlue;">hello</b><b style="margin:10px;background:lightBlue;">world</b>
+
+ 
+
+
+
+***
+### Wraptag Decorator 
+
+Use wraptag decorator to wrap following markup or value returned by function.  
+
+	from pytooteem import wrapatg  
+
+Wraptag decorator arguments 
+	
+	@tag(tag_name, tag_attributes)	
+
+	expected types:  
+	tag_name as String  
+	tag_attributes as **kwargs  
+
+Wraptag types  
+
+	Empty wrap      
+	@wraptag(String)   
+
+	Wrap with attributes    
+	@wraptag(String, **kwargs)    
+
+Example
+
+`@wraptag('p', style='background:DarkSlateGray;' )`   
+`@tag('b', ('hello', 'world'), style='margin:10px;background:lightBlue;')`  
+
+<p style="background:DarkSlateGray;">
+<b style="margin:10px;background:lightBlue;">hello</b><b style="margin:10px;background:lightBlue;">world</b></p>  
+
+
+***
+### Plain Decorator 
+
+Use to embed plain text
+ 
+	from pytooteem import plain  
+
+Example
+
+`@plain('<b>BOLD</b>')`   
+
+
+<b>BOLD</b> 
+
+***
+
+### Tootblock and Block decorator
+
+**Tootblock** , group of markup tags, is a  decorated function that defines tag relations and relative appearance.  
 
 	...  
 	@pytooteemdecorator  
 	@pytooteemdecorator  
-	def block(): 
+	def toot_block(): 
 		pass   
 
+Example
 
-***
-### Tag Decorator  
- 
+	@wraptag('p', style='background:DarkSlateGray;' )  
+	@tag('b', ('hello', 'world'), style='margin:10px;background:lightBlue;')  
+	def my_tootblock():
+		pass  
 
-	from pytooteem import tag 
+<p style="background:DarkSlateGray;">
+<b style="margin:10px;background:lightBlue;">hello</b><b style="margin:10px;background:lightBlue;">world</b></p>  
 
-Empty tag    
+
+### Block Decorator  
+
+Use to insert a tootblock  
   
-	@tag(String)  
-ex: `@tag('button')` <button></button> 
+	from pytooteem import block   
 
-Tag with value    
-  
-	@tag(String, String)   
-ex: `@tag('button', 'button')` <button>button</button>  
+Tootblock decorator arguments  
 
-Tag with attributes    
-  
-	@tag(String, **kwargs)    
-ex: `@tag('button', disabled='')` <button disabled=""></button>  
+	@tag(tootblock)  
 
-* Pass 'class' as html attribute 
- 
-		@tag(String, clas='')    
-ex: `@tag('button', clas='button')` <button class="button"></button>    
+	expected types:
+	tootblock as function  
 
-Tag with container    
-  
-	@tag(String, tuple))    
-ex: `@tag('button', ('b1', 'b2'))` <button>b1</button><button>b2</button> 
+Example
 
-***
-### Wraptag Decorator 
- 
+	@block(my_tootblock)
+	@plain('<br>')
+	@block(my_tootblock)
+	def double_toot():
+		pass  
 
-	from pytooteem import wrapatg 
-
-Empty wrap    
-  
-	@wraptag(String)  
-ex: `@wraptag('button')` <button></button>  
-
-Wrap with attributes    
-  
-	@wraptag(String, **kwargs)    
-ex: `@wraptag('button', disabled='')` <button disabled=""></button> 
-
-***
-### Plain Decorator 
- 
-	from pytooteem import plain  
-
-Empty wrap    
-  
-	@plain(String)  
-ex: `@plain('<button>')` <button>  
-
-***
-### Block Decorator 
-  
-	from pytooteem import block  
-
-	# example block  
-	@tag('button')   
-	def button_block():  
-		pass    
-
-Single block
- 
-	@block(button_block)   
-	def parent_block():    
-		pass`  
-ex:  
- `parent_block()` <button></button>   
-
-Multiple blocks   
-
-	@block(button_block)    
-	@block(button_block)   
-	def parent_block():     
-		pass   
-ex:  
- `parent_block()` <button></button><button></button>   
+<p style="background:DarkSlateGray;">
+<b style="margin:10px;background:lightBlue;">hello</b><b style="margin:10px;background:lightBlue;">world</b></p> 
+<br>
+ <p style="background:DarkSlateGray;">
+<b style="margin:10px;background:lightBlue;">hello</b><b style="margin:10px;background:lightBlue;">world</b></p>  
+	 
 
 ***
 
-### Recipes  
+### Toottemplates 
 
-Recipe is a function containing dynamic HTML definition for a block.  
+Toottemplate is a function containing markup instruction for a tootblock.  
 
-    def recipe():
+    def template():
 		@pytooteemdecorator
-        def make_recipe():
+        def block():
             pass
-        return make_recipe()  
+        return block()   
+
+Example
+
+	def my_toottemplate():
+		@wraptag('p', style='background:DarkSlateGray;' )  
+		@tag('b', ('hello', 'world'), style='margin:10px;background:lightBlue;')  
+		def my_tootblock():
+			pass  
+		return my_tootblock()
+
+
 ***
 
 ### Data Decorator  
-Recipe decorator, combine Data with HTML
+Use to dynamically populate toottemapltes with each container elements.
 
 	from pytooteem import data  
 
-2D container  
-  
-	@data(2dcontainer)  
+Data decorator arguments
 
-ex:   
-  
-	@data((('d1', 'd2'), ('p1', 'p2')))  
-    def li_recipe(element):  
+	@data(elements)
+
+	expected types:
+	elements as 2d container or object container
+
+Examples
+ 
+embed arguments by position  
+
+`my_data=(('this', 'is'), ('my', 'data'))`
+
+	@data(my_data)  
+    def toottemplate(element):  
         @wraptag('ul')  
         @tag('li', element[0])  
         @tag('li', element[1])  
@@ -149,16 +215,12 @@ ex:
             pass  
         return li_block()  
 
-<ul><li>d1</li><li>d2</li></ul><ul><li>p1</li><li>p2</li></ul>  
+<ul><li>this</li><li>is</li></ul><ul><li>my</li><li>data</li></ul>  
 
-Object Container  
-  
-	@data(object_container)  
-
-ex:   
+embed arguments by name  
   
 	@data(get_objects())  
-    def li_recipe(element):  
+    def toottemplate(element):  
         @wraptag('ul')  
         @tag('li', element.instance_variable1)  
         @tag('li', element.instance_variable2)    
@@ -168,7 +230,7 @@ ex:
 
 ## Pytooteem_app  
 
-Examples over Flask application
+Examples over Flask application.
 
 ## Testing	
 
